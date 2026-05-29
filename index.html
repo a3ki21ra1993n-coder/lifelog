@@ -6,216 +6,53 @@
 <title>ライフログ</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
- 
-  :root {
-    --bg: #0f0f0f;
-    --surface: #171717;
-    --surface2: #1e1e1e;
-    --border: #2a2a2a;
-    --accent: #c8ff00;
-    --accent3: #38bdf8;
-    --text: #e8e8e8;
-    --muted: #666;
-    --dim: #999;
-  }
- 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
- 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Zen Kaku Gothic New', sans-serif;
-    min-height: 100vh;
-    padding: 20px 16px 40px;
-    max-width: 480px;
-    margin: 0 auto;
-  }
- 
-  /* ヘッダー */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 24px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--border);
-  }
-  .header-left h1 {
-    font-size: 9px;
-    font-family: 'JetBrains Mono', monospace;
-    color: var(--accent3);
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    margin-bottom: 3px;
-  }
-  .header-left p {
-    font-size: 22px;
-    font-weight: 900;
-    line-height: 1;
-  }
-  .header-right {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    text-align: right;
-    line-height: 1.8;
-  }
- 
-  /* フォームラベル */
-  .form-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 7px;
-    display: block;
-  }
- 
-  .form-row { margin-bottom: 16px; }
- 
-  /* カテゴリー */
-  .cat-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-  }
-  .cat-btn {
-    padding: 11px 4px;
-    text-align: center;
-    font-size: 11px;
-    line-height: 1.4;
-    background: var(--surface2);
-    border: 2px solid var(--border);
-    color: var(--muted);
-    cursor: pointer;
-    transition: all .12s;
-    border-radius: 2px;
-  }
-  .cat-btn:active { transform: scale(0.96); }
-  .cat-btn.selected {
-    border-color: var(--accent3);
-    background: #0d2030;
-    color: #fff;
-    font-weight: 700;
-    box-shadow: 0 0 0 1px var(--accent3);
-  }
- 
-  /* テキスト入力 */
-  .form-input, .form-textarea {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'Zen Kaku Gothic New', sans-serif;
-    font-size: 15px;
-    padding: 10px 12px;
-    outline: none;
-    transition: border-color .15s;
-    border-radius: 2px;
-    -webkit-appearance: none;
-  }
-  .form-input:focus, .form-textarea:focus { border-color: var(--accent3); }
-  .form-textarea { resize: none; min-height: 72px; }
- 
-  /* 2カラム */
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
- 
-  /* 評価 */
-  .star-row { display: flex; gap: 8px; }
-  .star-btn {
-    flex: 1; padding: 10px 0; text-align: center;
-    font-size: 14px; background: var(--surface2);
-    border: 1px solid var(--border); cursor: pointer;
-    transition: all .12s; color: var(--muted); border-radius: 2px;
-  }
-  .star-btn:active { transform: scale(0.96); }
-  .star-btn.selected { border-color: #fbbf24; background: #1a1500; color: #fbbf24; }
- 
-  /* チェックボックス */
-  .check-row { display: flex; flex-direction: column; gap: 7px; }
-  .check-item {
-    display: flex; align-items: center; gap: 10px;
-    cursor: pointer; padding: 10px 12px;
-    background: var(--surface2); border: 1px solid var(--border);
-    transition: all .12s; user-select: none; border-radius: 2px;
-  }
-  .check-item:active { opacity: .8; }
-  .check-item.checked-url { border-color: var(--accent3); background: #0a1a24; }
-  .check-item.checked-detail { border-color: var(--accent); background: #111a00; }
-  .check-box {
-    width: 18px; height: 18px; border: 1px solid var(--border);
-    background: var(--bg); flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; transition: all .15s; border-radius: 2px;
-  }
-  .check-item.checked-url .check-box { border-color: var(--accent3); background: var(--accent3); color: #0f0f0f; }
-  .check-item.checked-detail .check-box { border-color: var(--accent); background: var(--accent); color: #0f0f0f; }
-  .check-text { font-size: 13px; line-height: 1.4; }
-  .check-text span { font-size: 10px; color: var(--muted); display: block; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
- 
-  /* ボタン */
-  .submit-btn {
-    width: 100%; padding: 15px;
-    background: var(--accent3); color: #0f0f0f;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; font-weight: 600;
-    letter-spacing: .1em; border: none; cursor: pointer;
-    transition: opacity .15s; border-radius: 2px;
-    margin-top: 4px;
-  }
-  .submit-btn:active { opacity: .8; }
- 
-  /* テキスト表示エリア */
-  .text-display { display: none; margin-top: 16px; }
-  .text-display.show { display: block; }
- 
-  .text-display-header {
-    display: flex; align-items: center; gap: 8px;
-    margin-bottom: 10px;
-  }
-  .text-display-header .bar { width: 16px; height: 2px; background: var(--accent); }
-  .text-display-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--accent);
-  }
- 
-  .text-display-instruction {
-    font-size: 12px; color: var(--muted);
-    margin-bottom: 10px; line-height: 1.7;
-    padding: 10px 12px;
-    background: var(--surface);
-    border-left: 2px solid var(--accent3);
-  }
-  .text-display-instruction strong { color: var(--accent3); }
- 
-  .copyable-text {
-    background: #0a1a10;
-    border: 1px solid var(--accent);
-    padding: 16px;
-    font-size: 14px;
-    line-height: 2;
-    color: var(--text);
-    white-space: pre-wrap;
-    word-break: break-all;
-    user-select: text;
-    -webkit-user-select: text;
-    cursor: text;
-    border-radius: 2px;
-  }
- 
-  .reset-btn {
-    width: 100%; padding: 12px; margin-top: 10px;
-    background: transparent; border: 1px solid var(--border);
-    color: var(--muted); font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; cursor: pointer; transition: all .15s;
-    border-radius: 2px; letter-spacing: .08em;
-  }
-  .reset-btn:active { border-color: var(--dim); color: var(--text); }
- 
-  /* 日付インプット */
-  input[type="date"] { color-scheme: dark; }
+  :root { --bg:#0f0f0f;--surface:#171717;--surface2:#1e1e1e;--border:#2a2a2a;--accent:#c8ff00;--accent3:#38bdf8;--text:#e8e8e8;--muted:#666;--dim:#999; }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--bg);color:var(--text);font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;padding:20px 16px 40px;max-width:480px;margin:0 auto;}
+  .header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+  .header-left h1{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--accent3);letter-spacing:.18em;text-transform:uppercase;margin-bottom:3px;}
+  .header-left p{font-size:22px;font-weight:900;line-height:1;}
+  .header-right{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-align:right;line-height:1.8;}
+  .clear-btn{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);background:transparent;border:1px solid var(--border);padding:4px 8px;cursor:pointer;border-radius:2px;transition:all .15s;letter-spacing:.08em;display:block;margin-top:6px;}
+  .clear-btn:active{border-color:var(--dim);color:var(--text);}
+  .form-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:block;}
+  .form-row{margin-bottom:16px;}
+  .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+  .cat-btn{padding:11px 4px;text-align:center;font-size:11px;line-height:1.4;background:var(--surface2);border:2px solid var(--border);color:var(--muted);cursor:pointer;transition:all .12s;border-radius:2px;}
+  .cat-btn:active{transform:scale(0.96);}
+  .cat-btn.selected{border-color:var(--accent3);background:#0d2030;color:#fff;font-weight:700;box-shadow:0 0 0 1px var(--accent3);}
+  .form-input,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Zen Kaku Gothic New',sans-serif;font-size:15px;padding:10px 12px;outline:none;transition:border-color .15s;border-radius:2px;-webkit-appearance:none;}
+  .form-input:focus,.form-textarea:focus{border-color:var(--accent3);}
+  .form-textarea{resize:none;min-height:72px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .star-row{display:flex;gap:8px;}
+  .star-btn{flex:1;padding:10px 0;text-align:center;font-size:14px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:all .12s;color:var(--muted);border-radius:2px;}
+  .star-btn:active{transform:scale(0.96);}
+  .star-btn.selected{border-color:#fbbf24;background:#1a1500;color:#fbbf24;}
+  .check-row{display:flex;flex-direction:column;gap:7px;}
+  .check-item{display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);transition:all .12s;user-select:none;border-radius:2px;}
+  .check-item:active{opacity:.8;}
+  .check-item.checked-url{border-color:var(--accent3);background:#0a1a24;}
+  .check-item.checked-detail{border-color:var(--accent);background:#111a00;}
+  .check-box{width:18px;height:18px;border:1px solid var(--border);background:var(--bg);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;border-radius:2px;}
+  .check-item.checked-url .check-box{border-color:var(--accent3);background:var(--accent3);color:#0f0f0f;}
+  .check-item.checked-detail .check-box{border-color:var(--accent);background:var(--accent);color:#0f0f0f;}
+  .check-text{font-size:13px;line-height:1.4;}
+  .check-text span{font-size:10px;color:var(--muted);display:block;margin-top:2px;font-family:'JetBrains Mono',monospace;}
+  .submit-btn{width:100%;padding:15px;background:var(--accent3);color:#0f0f0f;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;border:none;cursor:pointer;transition:opacity .15s;border-radius:2px;margin-top:4px;}
+  .submit-btn:active{opacity:.8;}
+  .text-display{display:none;margin-top:16px;}
+  .text-display.show{display:block;}
+  .text-display-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  .text-display-header .bar{width:16px;height:2px;background:var(--accent);}
+  .text-display-title{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);}
+  .copyable-text{background:#0a1a10;border:1px solid var(--accent);padding:16px;font-size:14px;line-height:2;color:var(--text);white-space:pre-wrap;word-break:break-all;user-select:text;-webkit-user-select:text;cursor:text;border-radius:2px;margin-bottom:10px;}
+  .copy-btn{width:100%;padding:14px;background:var(--accent);color:#0f0f0f;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;border:none;cursor:pointer;transition:all .15s;border-radius:2px;}
+  .copy-btn:active{opacity:.8;}
+  .copy-btn.copied{background:#1a3a0a;color:var(--accent);border:1px solid var(--accent);}
+  .reset-btn{width:100%;padding:12px;margin-top:8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;transition:all .15s;border-radius:2px;letter-spacing:.08em;}
+  .reset-btn:active{border-color:var(--dim);color:var(--text);}
+  input[type="date"]{color-scheme:dark;}
 </style>
 </head>
 <body>
@@ -225,10 +62,12 @@
     <h1>Lifelog Input</h1>
     <p>ライフログ</p>
   </div>
-  <div class="header-right" id="header-date">—</div>
+  <div class="header-right">
+    <div id="header-date">—</div>
+    <button class="clear-btn" onclick="resetForm()">↺ クリア</button>
+  </div>
 </div>
  
-<!-- カテゴリー -->
 <div class="form-row">
   <label class="form-label">カテゴリー</label>
   <div class="cat-grid">
@@ -243,13 +82,11 @@
   </div>
 </div>
  
-<!-- タイトル -->
 <div class="form-row">
   <label class="form-label">タイトル <span style="color:#ff6b6b">*</span></label>
   <input type="text" id="f-title" class="form-input" placeholder="例：焼肉じゅうじゅう、シン・ゴジラ">
 </div>
  
-<!-- リンク検索 -->
 <div class="form-row">
   <label class="form-label">リンク検索（任意）</label>
   <div class="check-row">
@@ -264,7 +101,6 @@
   </div>
 </div>
  
-<!-- 日付・誰と -->
 <div class="form-grid form-row">
   <div>
     <label class="form-label">日付</label>
@@ -276,13 +112,11 @@
   </div>
 </div>
  
-<!-- ひとこと -->
 <div class="form-row">
   <label class="form-label">ひとこと（任意）</label>
   <textarea id="f-memo" class="form-textarea" placeholder="感想・メモをひとこと"></textarea>
 </div>
  
-<!-- 評価 -->
 <div class="form-row">
   <label class="form-label">評価（任意）</label>
   <div class="star-row">
@@ -292,93 +126,91 @@
   </div>
 </div>
  
-<button class="submit-btn" onclick="showText()">→ チャットに貼り付ける文を表示</button>
+<button class="submit-btn" onclick="showText()">→ コピー用テキストを生成</button>
  
-<!-- テキスト表示エリア -->
 <div class="text-display" id="text-display">
   <div class="text-display-header">
     <div class="bar"></div>
     <span class="text-display-title">Claudeに貼り付けてください</span>
   </div>
-  <div class="text-display-instruction">
-    以下を<strong>長押し → 全選択 → コピー</strong>して、Claudeのチャット欄に貼り付けて送信してください。
-  </div>
   <div class="copyable-text" id="copyable-text"></div>
+  <button class="copy-btn" id="copy-btn" onclick="copyText()">📋 ワンタップでコピー</button>
   <button class="reset-btn" onclick="resetForm()">↩ 新しく入力する</button>
 </div>
  
 <script>
-let selectedCat = '', selectedStar = '';
-let checkUrl = false, checkDetail = false;
+let selectedCat='',selectedStar='',checkUrl=false,checkDetail=false;
+const today=new Date();
+const yyyy=today.getFullYear(),mm=String(today.getMonth()+1).padStart(2,'0'),dd=String(today.getDate()).padStart(2,'0');
+const dow=['日','月','火','水','木','金','土'][today.getDay()];
+document.getElementById('f-date').value=`${yyyy}-${mm}-${dd}`;
+document.getElementById('header-date').textContent=`${yyyy}.${mm}.${dd} (${dow})`;
  
-// 日付・ヘッダー初期化
-const today = new Date();
-const yyyy = today.getFullYear();
-const mm = String(today.getMonth()+1).padStart(2,'0');
-const dd = String(today.getDate()).padStart(2,'0');
-const dow = ['日','月','火','水','木','金','土'][today.getDay()];
-document.getElementById('f-date').value = `${yyyy}-${mm}-${dd}`;
-document.getElementById('header-date').textContent = `${yyyy}.${mm}.${dd} (${dow})`;
- 
-function selectCat(el, val) {
-  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedCat = val;
+function selectCat(el,val){document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');selectedCat=val;}
+function selectStar(el,val){document.querySelectorAll('.star-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');selectedStar=val;}
+function toggleCheck(type){
+  if(type==='url'){checkUrl=!checkUrl;if(checkUrl)checkDetail=false;}
+  else{checkDetail=!checkDetail;if(checkDetail)checkUrl=false;}
+  document.getElementById('chk-url').className='check-item'+(checkUrl?' checked-url':'');
+  document.getElementById('chk-detail').className='check-item'+(checkDetail?' checked-detail':'');
+  document.getElementById('chk-url-box').textContent=checkUrl?'✓':'';
+  document.getElementById('chk-detail-box').textContent=checkDetail?'✓':'';
 }
-function selectStar(el, val) {
-  document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedStar = val;
-}
-function toggleCheck(type) {
-  if (type === 'url') { checkUrl = !checkUrl; if (checkUrl) checkDetail = false; }
-  else { checkDetail = !checkDetail; if (checkDetail) checkUrl = false; }
-  document.getElementById('chk-url').className = 'check-item' + (checkUrl ? ' checked-url' : '');
-  document.getElementById('chk-detail').className = 'check-item' + (checkDetail ? ' checked-detail' : '');
-  document.getElementById('chk-url-box').textContent = checkUrl ? '✓' : '';
-  document.getElementById('chk-detail-box').textContent = checkDetail ? '✓' : '';
-}
- 
-function showText() {
-  const title = document.getElementById('f-title').value.trim();
-  if (!title) { alert('タイトルを入力してください'); return; }
-  const date = document.getElementById('f-date').value;
-  const withWho = document.getElementById('f-with').value.trim() || '一人';
-  const memo = document.getElementById('f-memo').value.trim();
-  const linkMode = checkDetail ? '概要つき' : checkUrl ? 'URLのみ' : 'なし';
- 
-  const lines = [
-    'ライフログを登録してください。',
-    `カテゴリー: ${selectedCat || 'その他'}`,
-    `タイトル: ${title}`,
-    `日付: ${date}`,
-    `誰と: ${withWho}`,
-  ];
-  if (memo) lines.push(`ひとこと: ${memo}`);
-  if (selectedStar) lines.push(`評価: ${selectedStar}`);
+function buildText(){
+  const title=document.getElementById('f-title').value.trim();
+  const date=document.getElementById('f-date').value;
+  const withWho=document.getElementById('f-with').value.trim()||'一人';
+  const memo=document.getElementById('f-memo').value.trim();
+  const linkMode=checkDetail?'概要つき':checkUrl?'URLのみ':'なし';
+  const lines=['ライフログを登録してください。',`カテゴリー: ${selectedCat||'その他'}`,`タイトル: ${title}`,`日付: ${date}`,`誰と: ${withWho}`];
+  if(memo)lines.push(`ひとこと: ${memo}`);
+  if(selectedStar)lines.push(`評価: ${selectedStar}`);
   lines.push(`リンク検索: ${linkMode}`);
- 
-  document.getElementById('copyable-text').textContent = lines.join('\n');
-  document.getElementById('text-display').classList.add('show');
-  document.getElementById('text-display').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  return lines.join('\n');
 }
- 
-function resetForm() {
-  document.getElementById('f-title').value = '';
-  document.getElementById('f-with').value = '一人';
-  document.getElementById('f-memo').value = '';
-  document.querySelectorAll('.cat-btn, .star-btn').forEach(b => b.classList.remove('selected'));
-  selectedCat = ''; selectedStar = '';
-  checkUrl = false; checkDetail = false;
-  document.getElementById('chk-url').className = 'check-item';
-  document.getElementById('chk-detail').className = 'check-item';
-  document.getElementById('chk-url-box').textContent = '';
-  document.getElementById('chk-detail-box').textContent = '';
+function showText(){
+  const title=document.getElementById('f-title').value.trim();
+  if(!title){alert('タイトルを入力してください');return;}
+  document.getElementById('copyable-text').textContent=buildText();
+  const display=document.getElementById('text-display');
+  display.classList.add('show');
+  const btn=document.getElementById('copy-btn');
+  btn.textContent='📋 ワンタップでコピー';
+  btn.classList.remove('copied');
+  display.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+async function copyText(){
+  const text=document.getElementById('copyable-text').textContent;
+  const btn=document.getElementById('copy-btn');
+  try{
+    await navigator.clipboard.writeText(text);
+    btn.textContent='✓ コピー完了！Claudeに貼り付けて送信してください';
+    btn.classList.add('copied');
+  }catch{
+    const el=document.getElementById('copyable-text');
+    const range=document.createRange();
+    range.selectNodeContents(el);
+    const sel=window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    btn.textContent='⚠ 手動でコピーしてください（長押し→コピー）';
+  }
+}
+function resetForm(){
+  document.getElementById('f-title').value='';
+  document.getElementById('f-with').value='一人';
+  document.getElementById('f-memo').value='';
+  document.querySelectorAll('.cat-btn,.star-btn').forEach(b=>b.classList.remove('selected'));
+  selectedCat='';selectedStar='';checkUrl=false;checkDetail=false;
+  document.getElementById('chk-url').className='check-item';
+  document.getElementById('chk-detail').className='check-item';
+  document.getElementById('chk-url-box').textContent='';
+  document.getElementById('chk-detail-box').textContent='';
   document.getElementById('text-display').classList.remove('show');
-  const t = new Date();
-  document.getElementById('f-date').value = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+  const t=new Date();
+  document.getElementById('f-date').value=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
 </body>
 </html>
- 
