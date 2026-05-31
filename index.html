@@ -3,149 +3,276 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>ライフログ</title>
+<title>ログ</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
-  :root { --bg:#0f0f0f;--surface:#171717;--surface2:#1e1e1e;--border:#2a2a2a;--accent:#c8ff00;--accent3:#38bdf8;--text:#e8e8e8;--muted:#666;--dim:#999; }
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-  body{background:var(--bg);color:var(--text);font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;padding:20px 16px 40px;max-width:480px;margin:0 auto;}
-  .header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-  .header-left h1{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--accent3);letter-spacing:.18em;text-transform:uppercase;margin-bottom:3px;}
-  .header-left p{font-size:22px;font-weight:900;line-height:1;}
-  .header-right{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-align:right;line-height:1.8;}
-  .clear-btn{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);background:transparent;border:1px solid var(--border);padding:4px 8px;cursor:pointer;border-radius:2px;transition:all .15s;letter-spacing:.08em;display:block;margin-top:6px;}
-  .clear-btn:active{border-color:var(--dim);color:var(--text);}
-  .form-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:block;}
-  .form-row{margin-bottom:16px;}
-  .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
-  .cat-btn{padding:11px 4px;text-align:center;font-size:11px;line-height:1.4;background:var(--surface2);border:2px solid var(--border);color:var(--muted);cursor:pointer;transition:all .12s;border-radius:2px;}
-  .cat-btn:active{transform:scale(0.96);}
-  .cat-btn.selected{border-color:var(--accent3);background:#0d2030;color:#fff;font-weight:700;box-shadow:0 0 0 1px var(--accent3);}
-  .form-input,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Zen Kaku Gothic New',sans-serif;font-size:15px;padding:10px 12px;outline:none;transition:border-color .15s;border-radius:2px;-webkit-appearance:none;}
-  .form-input:focus,.form-textarea:focus{border-color:var(--accent3);}
-  .form-textarea{resize:none;min-height:72px;}
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-  .star-row{display:flex;gap:8px;}
-  .star-btn{flex:1;padding:10px 0;text-align:center;font-size:14px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:all .12s;color:var(--muted);border-radius:2px;}
-  .star-btn:active{transform:scale(0.96);}
-  .star-btn.selected{border-color:#fbbf24;background:#1a1500;color:#fbbf24;}
-  .check-row{display:flex;flex-direction:column;gap:7px;}
-  .check-item{display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);transition:all .12s;user-select:none;border-radius:2px;}
-  .check-item:active{opacity:.8;}
-  .check-item.checked-url{border-color:var(--accent3);background:#0a1a24;}
-  .check-item.checked-detail{border-color:var(--accent);background:#111a00;}
-  .check-box{width:18px;height:18px;border:1px solid var(--border);background:var(--bg);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;border-radius:2px;}
-  .check-item.checked-url .check-box{border-color:var(--accent3);background:var(--accent3);color:#0f0f0f;}
-  .check-item.checked-detail .check-box{border-color:var(--accent);background:var(--accent);color:#0f0f0f;}
-  .check-text{font-size:13px;line-height:1.4;}
-  .check-text span{font-size:10px;color:var(--muted);display:block;margin-top:2px;font-family:'JetBrains Mono',monospace;}
-  .submit-btn{width:100%;padding:15px;background:var(--accent3);color:#0f0f0f;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;border:none;cursor:pointer;transition:opacity .15s;border-radius:2px;margin-top:4px;}
-  .submit-btn:active{opacity:.8;}
-  .text-display{display:none;margin-top:16px;}
-  .text-display.show{display:block;}
-  .text-display-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-  .text-display-header .bar{width:16px;height:2px;background:var(--accent);}
-  .text-display-title{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);}
-  .copyable-text{background:#0a1a10;border:1px solid var(--accent);padding:16px;font-size:14px;line-height:2;color:var(--text);white-space:pre-wrap;word-break:break-all;user-select:text;-webkit-user-select:text;cursor:text;border-radius:2px;margin-bottom:10px;}
-  .copy-btn{width:100%;padding:14px;background:var(--accent);color:#0f0f0f;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;border:none;cursor:pointer;transition:all .15s;border-radius:2px;}
-  .copy-btn:active{opacity:.8;}
-  .copy-btn.copied{background:#1a3a0a;color:var(--accent);border:1px solid var(--accent);}
-  .reset-btn{width:100%;padding:12px;margin-top:8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;transition:all .15s;border-radius:2px;letter-spacing:.08em;}
-  .reset-btn:active{border-color:var(--dim);color:var(--text);}
-  input[type="date"]{color-scheme:dark;}
+@import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+:root{--bg:#0f0f0f;--surface:#171717;--surface2:#1e1e1e;--border:#2a2a2a;--accent:#c8ff00;--accent3:#38bdf8;--text:#e8e8e8;--muted:#666;--dim:#999;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;padding:0 0 40px;max-width:480px;margin:0 auto;}
+
+/* タブヘッダー */
+.top-bar{display:flex;justify-content:space-between;align-items:center;padding:16px 16px 0;}
+.app-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent3);letter-spacing:.18em;text-transform:uppercase;}
+.tab-switch{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:2px;overflow:hidden;}
+.tab-switch button{padding:6px 14px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.08em;background:none;border:none;color:var(--muted);cursor:pointer;transition:all .15s;}
+.tab-switch button.active{background:var(--accent3);color:#0f0f0f;font-weight:600;}
+
+/* ライフログ共通 */
+.page{display:none;padding:20px 16px;}
+.page.active{display:block;}
+.header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.header-left h1{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--accent3);letter-spacing:.18em;text-transform:uppercase;margin-bottom:3px;}
+.header-left p{font-size:22px;font-weight:900;line-height:1;}
+.header-right{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-align:right;line-height:1.8;}
+.clear-btn{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);background:transparent;border:1px solid var(--border);padding:4px 8px;cursor:pointer;border-radius:2px;transition:all .15s;letter-spacing:.08em;display:block;margin-top:6px;}
+.clear-btn:active{border-color:var(--dim);color:var(--text);}
+.form-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:block;}
+.form-row{margin-bottom:16px;}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.cat-btn{padding:11px 4px;text-align:center;font-size:11px;line-height:1.4;background:var(--surface2);border:2px solid var(--border);color:var(--muted);cursor:pointer;transition:all .12s;border-radius:2px;}
+.cat-btn:active{transform:scale(0.96);}
+.cat-btn.selected{border-color:var(--accent3);background:#0d2030;color:#fff;font-weight:700;box-shadow:0 0 0 1px var(--accent3);}
+.form-input,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Zen Kaku Gothic New',sans-serif;font-size:15px;padding:10px 12px;outline:none;transition:border-color .15s;border-radius:2px;-webkit-appearance:none;}
+.form-input:focus,.form-textarea:focus{border-color:var(--accent3);}
+.form-textarea{resize:none;min-height:72px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.star-row{display:flex;gap:8px;}
+.star-btn{flex:1;padding:10px 0;text-align:center;font-size:14px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:all .12s;color:var(--muted);border-radius:2px;}
+.star-btn:active{transform:scale(0.96);}
+.star-btn.selected{border-color:#fbbf24;background:#1a1500;color:#fbbf24;}
+.check-row{display:flex;flex-direction:column;gap:7px;}
+.check-item{display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);transition:all .12s;user-select:none;border-radius:2px;}
+.check-item:active{opacity:.8;}
+.check-item.checked-url{border-color:var(--accent3);background:#0a1a24;}
+.check-item.checked-detail{border-color:var(--accent);background:#111a00;}
+.check-box{width:18px;height:18px;border:1px solid var(--border);background:var(--bg);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;border-radius:2px;}
+.check-item.checked-url .check-box{border-color:var(--accent3);background:var(--accent3);color:#0f0f0f;}
+.check-item.checked-detail .check-box{border-color:var(--accent);background:var(--accent);color:#0f0f0f;}
+.check-text{font-size:13px;line-height:1.4;}
+.check-text span{font-size:10px;color:var(--muted);display:block;margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.submit-btn{width:100%;padding:15px;background:var(--accent3);color:#0f0f0f;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;border:none;cursor:pointer;transition:opacity .15s;border-radius:2px;margin-top:4px;}
+.submit-btn:active{opacity:.8;}
+.text-display{display:none;margin-top:16px;}
+.text-display.show{display:block;}
+.text-display-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.text-display-header .bar{width:16px;height:2px;background:var(--accent);}
+.text-display-title{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);}
+.copyable-text{background:#0a1a10;border:1px solid var(--accent);padding:16px;font-size:14px;line-height:2;color:var(--text);white-space:pre-wrap;word-break:break-all;user-select:text;-webkit-user-select:text;cursor:text;border-radius:2px;margin-bottom:10px;}
+.copy-btn{width:100%;padding:14px;background:var(--accent);color:#0f0f0f;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;border:none;cursor:pointer;transition:all .15s;border-radius:2px;}
+.copy-btn:active{opacity:.8;}
+.copy-btn.copied{background:#1a3a0a;color:var(--accent);border:1px solid var(--accent);}
+.reset-btn{width:100%;padding:12px;margin-top:8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;transition:all .15s;border-radius:2px;letter-spacing:.08em;}
+.reset-btn:active{border-color:var(--dim);color:var(--text);}
+input[type="date"]{color-scheme:dark;}
+select.form-input{color-scheme:dark;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path fill='%23666' d='M6 8L1 3h10z'/></svg>");background-repeat:no-repeat;background-position:right 12px center;}
+
+/* キャリアログ固有 */
+.entry-card{border:1px solid var(--border);border-radius:2px;padding:14px;margin-bottom:12px;background:var(--surface);}
+.entry-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.entry-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent3);letter-spacing:.12em;}
+.entry-delete{font-family:'JetBrains Mono',monospace;font-size:9px;color:#ef4444;background:none;border:none;cursor:pointer;}
+.two-col{display:grid;grid-template-columns:1fr 90px;gap:10px;}
+.tag-grid{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.tag-btn{padding:5px 10px;border-radius:2px;font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted);transition:all .15s;}
+.tag-btn.sel-tool{background:#0d2030;border-color:var(--accent3);color:var(--accent3);}
+.tag-btn.sel-biz{background:#111a00;border-color:var(--accent);color:var(--accent);}
+.add-entry-btn{width:100%;padding:11px;border-radius:2px;background:transparent;border:1px dashed var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:.06em;margin-bottom:12px;}
+.add-entry-btn:active{border-color:var(--dim);}
+
+/* 設定画面 */
+.settings-back{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);background:none;border:none;cursor:pointer;letter-spacing:.08em;margin-bottom:16px;display:block;}
+.settings-title{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--accent3);letter-spacing:.18em;text-transform:uppercase;margin-bottom:4px;}
+.settings-section{margin-bottom:24px;}
+.tag-removable{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:2px;font-size:11px;font-family:'JetBrains Mono',monospace;background:var(--surface2);border:1px solid var(--border);color:var(--muted);margin:3px;}
+.tag-removable button{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;line-height:1;padding:0;}
+.add-tag-row{display:flex;gap:8px;margin-top:8px;}
+.add-tag-btn{padding:10px 14px;background:var(--accent3);color:#0f0f0f;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;border:none;cursor:pointer;border-radius:2px;white-space:nowrap;}
 </style>
 </head>
 <body>
- 
-<div class="header">
-  <div class="header-left">
-    <h1>Lifelog Input</h1>
-    <p>ライフログ</p>
-  </div>
-  <div class="header-right">
-    <div id="header-date">—</div>
-    <button class="clear-btn" onclick="resetForm()">↺ クリア</button>
+
+<div class="top-bar">
+  <span class="app-title">Personal Log</span>
+  <div class="tab-switch">
+    <button id="tab-life" class="active" onclick="switchTab('life')">ライフログ</button>
+    <button id="tab-career" onclick="switchTab('career')">キャリアログ</button>
   </div>
 </div>
- 
-<div class="form-row">
-  <label class="form-label">カテゴリー</label>
-  <div class="cat-grid">
-    <div class="cat-btn" onclick="selectCat(this,'外食')">🍽<br>外食</div>
-    <div class="cat-btn" onclick="selectCat(this,'飲み会')">🍺<br>飲み会</div>
-    <div class="cat-btn" onclick="selectCat(this,'映画')">🎬<br>映画</div>
-    <div class="cat-btn" onclick="selectCat(this,'音楽')">🎵<br>音楽</div>
-    <div class="cat-btn" onclick="selectCat(this,'読書')">📚<br>読書</div>
-    <div class="cat-btn" onclick="selectCat(this,'運動')">🏃<br>運動</div>
-    <div class="cat-btn" onclick="selectCat(this,'温泉・サウナ')">♨️<br>温泉・サウナ</div>
-    <div class="cat-btn" onclick="selectCat(this,'その他')">•<br>その他</div>
-  </div>
-</div>
- 
-<div class="form-row">
-  <label class="form-label">タイトル <span style="color:#ff6b6b">*</span></label>
-  <input type="text" id="f-title" class="form-input" placeholder="例：焼肉じゅうじゅう、シン・ゴジラ">
-</div>
- 
-<div class="form-row">
-  <label class="form-label">リンク検索（任意）</label>
-  <div class="check-row">
-    <div class="check-item" id="chk-url" onclick="toggleCheck('url')">
-      <div class="check-box" id="chk-url-box"></div>
-      <div class="check-text">リンクを貼る<span>URLのみ取得してNotionに登録</span></div>
+
+<!-- ライフログ -->
+<div class="page active" id="page-life">
+  <div class="header">
+    <div class="header-left">
+      <h1>Lifelog Input</h1>
+      <p>ライフログ</p>
     </div>
-    <div class="check-item" id="chk-detail" onclick="toggleCheck('detail')">
-      <div class="check-box" id="chk-detail-box"></div>
-      <div class="check-text">リンクを貼る（概要つき）<span>URL＋あらすじ・基本情報もひとことに追加</span></div>
+    <div class="header-right">
+      <div id="header-date">—</div>
+      <button class="clear-btn" onclick="resetLifeForm()">↺ クリア</button>
     </div>
   </div>
-</div>
- 
-<div class="form-grid form-row">
-  <div>
-    <label class="form-label">日付</label>
-    <input type="date" id="f-date" class="form-input">
+
+  <div class="form-row">
+    <label class="form-label">カテゴリー</label>
+    <div class="cat-grid">
+      <div class="cat-btn" onclick="selectCat(this,'外食')">🍽<br>外食</div>
+      <div class="cat-btn" onclick="selectCat(this,'飲み会')">🍺<br>飲み会</div>
+      <div class="cat-btn" onclick="selectCat(this,'映画')">🎬<br>映画</div>
+      <div class="cat-btn" onclick="selectCat(this,'音楽')">🎵<br>音楽</div>
+      <div class="cat-btn" onclick="selectCat(this,'読書')">📚<br>読書</div>
+      <div class="cat-btn" onclick="selectCat(this,'運動')">🏃<br>運動</div>
+      <div class="cat-btn" onclick="selectCat(this,'温泉・サウナ')">♨️<br>温泉・サウナ</div>
+      <div class="cat-btn" onclick="selectCat(this,'その他')">•<br>その他</div>
+    </div>
   </div>
-  <div>
-    <label class="form-label">誰と</label>
-    <input type="text" id="f-with" class="form-input" value="一人">
+
+  <div class="form-row">
+    <label class="form-label">タイトル <span style="color:#ff6b6b">*</span></label>
+    <input type="text" id="f-title" class="form-input" placeholder="例：焼肉じゅうじゅう、シン・ゴジラ">
+  </div>
+
+  <div class="form-row">
+    <label class="form-label">リンク検索（任意）</label>
+    <div class="check-row">
+      <div class="check-item" id="chk-url" onclick="toggleCheck('url')">
+        <div class="check-box" id="chk-url-box"></div>
+        <div class="check-text">リンクを貼る<span>URLのみ取得してNotionに登録</span></div>
+      </div>
+      <div class="check-item" id="chk-detail" onclick="toggleCheck('detail')">
+        <div class="check-box" id="chk-detail-box"></div>
+        <div class="check-text">リンクを貼る（概要つき）<span>URL＋あらすじ・基本情報もひとことに追加</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-grid form-row">
+    <div>
+      <label class="form-label">日付</label>
+      <input type="date" id="f-date" class="form-input">
+    </div>
+    <div>
+      <label class="form-label">誰と</label>
+      <input type="text" id="f-with" class="form-input" value="一人">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label class="form-label">ひとこと（任意）</label>
+    <textarea id="f-memo" class="form-textarea" placeholder="感想・メモをひとこと"></textarea>
+  </div>
+
+  <div class="form-row">
+    <label class="form-label">評価（任意）</label>
+    <div class="star-row">
+      <div class="star-btn" onclick="selectStar(this,'⭐')">⭐</div>
+      <div class="star-btn" onclick="selectStar(this,'⭐⭐')">⭐⭐</div>
+      <div class="star-btn" onclick="selectStar(this,'⭐⭐⭐')">⭐⭐⭐</div>
+    </div>
+  </div>
+
+  <button class="submit-btn" onclick="showLifeText()">→ コピー用テキストを生成</button>
+
+  <div class="text-display" id="life-text-display">
+    <div class="text-display-header">
+      <div class="bar"></div>
+      <span class="text-display-title">Claudeに貼り付けてください</span>
+    </div>
+    <div class="copyable-text" id="life-copyable-text"></div>
+    <button class="copy-btn" id="life-copy-btn" onclick="copyLifeText()">📋 ワンタップでコピー</button>
+    <button class="reset-btn" onclick="resetLifeForm()">↩ 新しく入力する</button>
   </div>
 </div>
- 
-<div class="form-row">
-  <label class="form-label">ひとこと（任意）</label>
-  <textarea id="f-memo" class="form-textarea" placeholder="感想・メモをひとこと"></textarea>
-</div>
- 
-<div class="form-row">
-  <label class="form-label">評価（任意）</label>
-  <div class="star-row">
-    <div class="star-btn" onclick="selectStar(this,'⭐')">⭐</div>
-    <div class="star-btn" onclick="selectStar(this,'⭐⭐')">⭐⭐</div>
-    <div class="star-btn" onclick="selectStar(this,'⭐⭐⭐')">⭐⭐⭐</div>
+
+<!-- キャリアログ -->
+<div class="page" id="page-career">
+  <!-- 通常フォーム -->
+  <div id="career-form-view">
+    <div class="header">
+      <div class="header-left">
+        <h1>Career Log Input</h1>
+        <p>キャリアログ</p>
+      </div>
+      <div class="header-right">
+        <div id="career-header-date">—</div>
+        <button class="clear-btn" onclick="resetCareerForm()">↺ クリア</button>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">日付</label>
+      <input type="date" id="c-date" class="form-input" style="max-width:180px;">
+    </div>
+
+    <div id="career-entries"></div>
+
+    <button class="add-entry-btn" onclick="addEntry()">＋ 業務を追加</button>
+
+    <button class="submit-btn" onclick="copyCareerText()" id="career-copy-btn">📋 まとめてコピーしてClaudeに送る</button>
+
+    <div class="text-display" id="career-copy-done" style="margin-top:12px;">
+      <div style="padding:10px 14px;border:1px solid var(--accent);border-radius:2px;background:#0a1a10;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);line-height:1.8;">
+        ✓ コピー完了<br>Claudeのチャットを開いて貼り付けてください
+      </div>
+    </div>
+
+    <div style="text-align:right;margin-top:12px;">
+      <button onclick="showCareerSettings()" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);background:none;border:none;cursor:pointer;letter-spacing:.08em;">⚙ 選択肢を管理</button>
+    </div>
+  </div>
+
+  <!-- 設定画面 -->
+  <div id="career-settings-view" style="display:none;">
+    <button class="settings-back" onclick="hideCareerSettings()">← 戻る</button>
+    <div class="header" style="margin-bottom:20px;">
+      <div class="header-left">
+        <h1>Settings</h1>
+        <p>選択肢の管理</p>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">顧客名</div>
+      <div id="client-tags" style="margin-top:8px;"></div>
+      <div class="add-tag-row">
+        <input type="text" id="new-client-input" class="form-input" placeholder="新しい顧客名" style="flex:1;">
+        <button class="add-tag-btn" onclick="addClient()">追加</button>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">プロジェクト</div>
+      <div id="project-tags" style="margin-top:8px;"></div>
+      <div class="add-tag-row">
+        <input type="text" id="new-project-input" class="form-input" placeholder="新しいプロジェクト名" style="flex:1;">
+        <button class="add-tag-btn" onclick="addProject()">追加</button>
+      </div>
+    </div>
   </div>
 </div>
- 
-<button class="submit-btn" onclick="showText()">→ コピー用テキストを生成</button>
- 
-<div class="text-display" id="text-display">
-  <div class="text-display-header">
-    <div class="bar"></div>
-    <span class="text-display-title">Claudeに貼り付けてください</span>
-  </div>
-  <div class="copyable-text" id="copyable-text"></div>
-  <button class="copy-btn" id="copy-btn" onclick="copyText()">📋 ワンタップでコピー</button>
-  <button class="reset-btn" onclick="resetForm()">↩ 新しく入力する</button>
-</div>
- 
+
 <script>
-let selectedCat='',selectedStar='',checkUrl=false,checkDetail=false;
-const today=new Date();
-const yyyy=today.getFullYear(),mm=String(today.getMonth()+1).padStart(2,'0'),dd=String(today.getDate()).padStart(2,'0');
-const dow=['日','月','火','水','木','金','土'][today.getDay()];
-document.getElementById('f-date').value=`${yyyy}-${mm}-${dd}`;
-document.getElementById('header-date').textContent=`${yyyy}.${mm}.${dd} (${dow})`;
- 
+// ===== 共通 =====
+const today = new Date();
+const yyyy = today.getFullYear(), mm = String(today.getMonth()+1).padStart(2,'0'), dd = String(today.getDate()).padStart(2,'0');
+const dow = ['日','月','火','水','木','金','土'][today.getDay()];
+const todayStr = `${yyyy}-${mm}-${dd}`;
+
+document.getElementById('f-date').value = todayStr;
+document.getElementById('c-date').value = todayStr;
+document.getElementById('header-date').textContent = `${yyyy}.${mm}.${dd} (${dow})`;
+document.getElementById('career-header-date').textContent = `${yyyy}.${mm}.${dd} (${dow})`;
+
+function switchTab(tab) {
+  document.getElementById('tab-life').classList.toggle('active', tab==='life');
+  document.getElementById('tab-career').classList.toggle('active', tab==='career');
+  document.getElementById('page-life').classList.toggle('active', tab==='life');
+  document.getElementById('page-career').classList.toggle('active', tab==='career');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ===== ライフログ =====
+let selectedCat='', selectedStar='', checkUrl=false, checkDetail=false;
+
 function selectCat(el,val){document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');selectedCat=val;}
 function selectStar(el,val){document.querySelectorAll('.star-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');selectedStar=val;}
 function toggleCheck(type){
@@ -156,7 +283,7 @@ function toggleCheck(type){
   document.getElementById('chk-url-box').textContent=checkUrl?'✓':'';
   document.getElementById('chk-detail-box').textContent=checkDetail?'✓':'';
 }
-function buildText(){
+function buildLifeText(){
   const title=document.getElementById('f-title').value.trim();
   const date=document.getElementById('f-date').value;
   const withWho=document.getElementById('f-with').value.trim()||'一人';
@@ -168,35 +295,32 @@ function buildText(){
   lines.push(`リンク検索: ${linkMode}`);
   return lines.join('\n');
 }
-function showText(){
+function showLifeText(){
   const title=document.getElementById('f-title').value.trim();
   if(!title){alert('タイトルを入力してください');return;}
-  document.getElementById('copyable-text').textContent=buildText();
-  const display=document.getElementById('text-display');
+  document.getElementById('life-copyable-text').textContent=buildLifeText();
+  const display=document.getElementById('life-text-display');
   display.classList.add('show');
-  const btn=document.getElementById('copy-btn');
+  const btn=document.getElementById('life-copy-btn');
   btn.textContent='📋 ワンタップでコピー';
   btn.classList.remove('copied');
   display.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-async function copyText(){
-  const text=document.getElementById('copyable-text').textContent;
-  const btn=document.getElementById('copy-btn');
+async function copyLifeText(){
+  const text=document.getElementById('life-copyable-text').textContent;
+  const btn=document.getElementById('life-copy-btn');
   try{
     await navigator.clipboard.writeText(text);
     btn.textContent='✓ コピー完了！Claudeに貼り付けて送信してください';
     btn.classList.add('copied');
   }catch{
-    const el=document.getElementById('copyable-text');
-    const range=document.createRange();
-    range.selectNodeContents(el);
-    const sel=window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
+    const el=document.getElementById('life-copyable-text');
+    const range=document.createRange();range.selectNodeContents(el);
+    const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);
     btn.textContent='⚠ 手動でコピーしてください（長押し→コピー）';
   }
 }
-function resetForm(){
+function resetLifeForm(){
   document.getElementById('f-title').value='';
   document.getElementById('f-with').value='一人';
   document.getElementById('f-memo').value='';
@@ -206,11 +330,212 @@ function resetForm(){
   document.getElementById('chk-detail').className='check-item';
   document.getElementById('chk-url-box').textContent='';
   document.getElementById('chk-detail-box').textContent='';
-  document.getElementById('text-display').classList.remove('show');
+  document.getElementById('life-text-display').classList.remove('show');
   const t=new Date();
   document.getElementById('f-date').value=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
   window.scrollTo({top:0,behavior:'smooth'});
 }
+
+// ===== キャリアログ =====
+const TOOL_TAGS = ["Excel","Notion","PCA","TKC","アサクラソフト","PowerPoint","freee","どっと原価","勘定奉行"];
+const BIZ_TAGS = ["ヒアリング","フロー設計","資料作成","議事録","業務分析","データ整理","レポーティング","クライアント対応","課題整理","仕組み化"];
+const DEFAULT_CLIENTS = ["社内","A社","B社","テスト"];
+const DEFAULT_PROJECTS = ["予実管理効率化","BPO立ち上げ","社内業務","フォーム作成"];
+
+function loadOpts(){
+  try{
+    return {
+      clients: JSON.parse(localStorage.getItem('career_clients'))||DEFAULT_CLIENTS,
+      projects: JSON.parse(localStorage.getItem('career_projects'))||DEFAULT_PROJECTS
+    };
+  }catch{return{clients:DEFAULT_CLIENTS,projects:DEFAULT_PROJECTS};}
+}
+function saveOpts(clients,projects){
+  localStorage.setItem('career_clients',JSON.stringify(clients));
+  localStorage.setItem('career_projects',JSON.stringify(projects));
+}
+
+let entries = [];
+
+function emptyEntry(){
+  return {client:'',project:'',hours:'',tasks:'',tools:[],biz:[],thoughts:'',showNewClient:false,showNewProject:false};
+}
+
+function addEntry(){
+  entries.push(emptyEntry());
+  renderEntries();
+}
+
+function removeEntry(i){
+  entries.splice(i,1);
+  renderEntries();
+}
+
+function toggleEntryTag(i,type,tag){
+  const key = type==='tool'?'tools':'biz';
+  const arr = entries[i][key];
+  const idx = arr.indexOf(tag);
+  if(idx>=0) arr.splice(idx,1); else arr.push(tag);
+  renderEntries();
+}
+
+function renderEntries(){
+  const opts = loadOpts();
+  const container = document.getElementById('career-entries');
+  const total = entries.length;
+  container.innerHTML = entries.map((e,i) => `
+    <div class="entry-card">
+      <div class="entry-header">
+        <span class="entry-label">ENTRY ${i+1} / ${total}</span>
+        ${total>1?`<button class="entry-delete" onclick="removeEntry(${i})">削除</button>`:''}
+      </div>
+      <div class="two-col form-row">
+        <div>
+          <label class="form-label">顧客名</label>
+          <select class="form-input" onchange="onClientChange(${i},this.value)">
+            <option value="">選択してください</option>
+            ${opts.clients.map(c=>`<option value="${c}" ${e.client===c?'selected':''}>${c}</option>`).join('')}
+            <option value="__new__" ${e.showNewClient?'selected':''}>＋ 新規追加</option>
+          </select>
+          ${e.showNewClient?`<input type="text" class="form-input" style="margin-top:6px;border-color:var(--accent);" placeholder="新しい顧客名" value="${e.client||''}" oninput="entries[${i}].client=this.value">`:''}
+        </div>
+        <div>
+          <label class="form-label">時間（h）</label>
+          <input type="number" class="form-input" min="0" max="24" step="0.5" value="${e.hours||''}" placeholder="1.5" oninput="entries[${i}].hours=this.value">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">プロジェクト / 業務</label>
+        <select class="form-input" onchange="onProjectChange(${i},this.value)">
+          <option value="">選択してください</option>
+          ${opts.projects.map(p=>`<option value="${p}" ${e.project===p?'selected':''}>${p}</option>`).join('')}
+          <option value="__new__" ${e.showNewProject?'selected':''}>＋ 新規追加</option>
+        </select>
+        ${e.showNewProject?`<input type="text" class="form-input" style="margin-top:6px;border-color:var(--accent);" placeholder="新しいプロジェクト名" value="${e.project||''}" oninput="entries[${i}].project=this.value">`:''}
+      </div>
+      <div class="form-row">
+        <label class="form-label">やったこと <span style="color:#ff6b6b">*</span></label>
+        <textarea class="form-textarea" placeholder="箇条書きでもOK" oninput="entries[${i}].tasks=this.value">${e.tasks||''}</textarea>
+      </div>
+      <div class="form-row">
+        <label class="form-label">使ったツール</label>
+        <div class="tag-grid">${TOOL_TAGS.map(t=>`<button class="tag-btn ${e.tools.includes(t)?'sel-tool':''}" onclick="toggleEntryTag(${i},'tool','${t}')">${t}</button>`).join('')}</div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">業務スキル</label>
+        <div class="tag-grid">${BIZ_TAGS.map(t=>`<button class="tag-btn ${e.biz.includes(t)?'sel-biz':''}" onclick="toggleEntryTag(${i},'biz','${t}')">${t}</button>`).join('')}</div>
+      </div>
+      <div>
+        <label class="form-label">気づき・考えたこと <span style="font-size:9px;color:var(--muted);">任意</span></label>
+        <textarea class="form-textarea" style="min-height:56px;" placeholder="工夫したこと、感じた課題など" oninput="entries[${i}].thoughts=this.value">${e.thoughts||''}</textarea>
+      </div>
+    </div>
+  `).join('');
+
+  const n = entries.length;
+  document.getElementById('career-copy-btn').textContent = `📋 ${n}件をコピーしてClaudeに送る`;
+}
+
+function onClientChange(i,val){
+  if(val==='__new__'){entries[i].client='';entries[i].showNewClient=true;}
+  else{entries[i].client=val;entries[i].showNewClient=false;}
+  renderEntries();
+}
+function onProjectChange(i,val){
+  if(val==='__new__'){entries[i].project='';entries[i].showNewProject=true;}
+  else{entries[i].project=val;entries[i].showNewProject=false;}
+  renderEntries();
+}
+
+async function copyCareerText(){
+  const date = document.getElementById('c-date').value;
+  const header = `【キャリアログ】\n日付：${date}\n件数：${entries.length}件\n`;
+  const blocks = entries.map((e,i)=>{
+    const lines = [
+      `--- エントリ${i+1} ---`,
+      `顧客名：${e.client||'未記入'}`,
+      `プロジェクト：${e.project||'未記入'}`,
+      `作業時間：${e.hours?e.hours+'h':'未記入'}`,
+      `やったこと：${e.tasks||'未記入'}`,
+      `使ったツール：${e.tools.length?e.tools.join('、'):'なし'}`,
+      `業務スキル：${e.biz.length?e.biz.join('、'):'なし'}`,
+    ];
+    if(e.thoughts)lines.push(`気づき：${e.thoughts}`);
+    return lines.join('\n');
+  });
+  const text = header+'\n'+blocks.join('\n\n')+'\n\nこれをNotionのキャリアログDBに登録してください。';
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch{
+    const el=document.createElement('textarea');
+    el.value=text;document.body.appendChild(el);el.select();
+    document.execCommand('copy');document.body.removeChild(el);
+  }
+  const done=document.getElementById('career-copy-done');
+  done.classList.add('show');
+  setTimeout(()=>done.classList.remove('show'),3000);
+}
+
+function resetCareerForm(){
+  entries = [emptyEntry()];
+  document.getElementById('c-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('career-copy-done').classList.remove('show');
+  renderEntries();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// 設定画面
+function showCareerSettings(){
+  document.getElementById('career-form-view').style.display='none';
+  document.getElementById('career-settings-view').style.display='block';
+  renderSettingsTags();
+}
+function hideCareerSettings(){
+  document.getElementById('career-settings-view').style.display='none';
+  document.getElementById('career-form-view').style.display='block';
+  renderEntries();
+}
+function renderSettingsTags(){
+  const opts=loadOpts();
+  document.getElementById('client-tags').innerHTML=opts.clients.map((c,i)=>
+    `<span class="tag-removable">${c}<button onclick="removeClient(${i})">×</button></span>`).join('');
+  document.getElementById('project-tags').innerHTML=opts.projects.map((p,i)=>
+    `<span class="tag-removable">${p}<button onclick="removeProject(${i})">×</button></span>`).join('');
+}
+function addClient(){
+  const v=document.getElementById('new-client-input').value.trim();
+  if(!v)return;
+  const opts=loadOpts();
+  opts.clients.push(v);
+  saveOpts(opts.clients,opts.projects);
+  document.getElementById('new-client-input').value='';
+  renderSettingsTags();
+}
+function removeClient(i){
+  const opts=loadOpts();
+  opts.clients.splice(i,1);
+  saveOpts(opts.clients,opts.projects);
+  renderSettingsTags();
+}
+function addProject(){
+  const v=document.getElementById('new-project-input').value.trim();
+  if(!v)return;
+  const opts=loadOpts();
+  opts.projects.push(v);
+  saveOpts(opts.clients,opts.projects);
+  document.getElementById('new-project-input').value='';
+  renderSettingsTags();
+}
+function removeProject(i){
+  const opts=loadOpts();
+  opts.projects.splice(i,1);
+  saveOpts(opts.clients,opts.projects);
+  renderSettingsTags();
+}
+
+// 初期化
+entries = [emptyEntry()];
+renderEntries();
 </script>
 </body>
 </html>
